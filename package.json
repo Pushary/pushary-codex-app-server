@@ -1,0 +1,68 @@
+{
+  "name": "@pushary/codex-app-server",
+  "version": "0.1.0",
+  "description": "Partner approvals for live Codex app-server sessions",
+  "author": "Pushary <business@pushary.com>",
+  "homepage": "https://github.com/Pushary/pushary-codex-app-server#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pushary/pushary-codex-app-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Pushary/pushary-codex-app-server/issues"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "COMPATIBILITY.md",
+    "LICENSE",
+    "NOTICE",
+    "examples"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run && npm run build && npm run test:conformance",
+    "test:conformance": "node --test test/conformance.test.mjs test/host-lifecycle.test.mjs",
+    "capture:protocol": "node scripts/capture-protocol.mjs",
+    "prepublishOnly": "npm run build && npm run typecheck && npm test"
+  },
+  "dependencies": {
+    "@pushary/server": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^2.1.0",
+    "@openai/codex": "0.160.1",
+    "ajv": "^8.17.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "pushary",
+    "codex",
+    "app-server",
+    "human-in-the-loop",
+    "approvals",
+    "partner-api"
+  ]
+}
