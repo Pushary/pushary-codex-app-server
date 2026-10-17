@@ -4,6 +4,10 @@ Route live Codex app-server command and file approvals to an enrolled Pushary Pa
 
 Experimental release: pinned to **Codex 0.160.1**, Node 22/24, and **@pushary/server >=2.3.0**. See [compatibility and verification](COMPATIBILITY.md).
 
+[Connect a test customer](https://pushary.com/sign-up?from=agent&plan=partner&utm_source=github&utm_medium=oss-adapter&utm_campaign=pushary-codex-app-server&utm_content=partner-start) · [Partner setup guide](https://pushary.com/docs/agents/build/quickstart?utm_source=github&utm_medium=oss-adapter&utm_campaign=pushary-codex-app-server&utm_content=guide)
+
+Live delivery requires a Pushary Partner workspace and an enrolled customer. The compatibility limits above still apply.
+
 ## Install and enroll
 
 ```sh
