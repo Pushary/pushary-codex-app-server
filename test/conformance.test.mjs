@@ -61,7 +61,7 @@ const runScenario = async (kind, answer) => {
     await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve) })
     const address = server.address(); assert.ok(address && typeof address === 'object')
     const baseUrl = `http://127.0.0.1:${address.port}`
-    await writeFile(join(home, 'config.toml'), `model = "gpt-5.4"\nmodel_provider = "mock"\napproval_policy = "on-request"\nsandbox_mode = "read-only"\n[model_providers.mock]\nname = "Mock"\nbase_url = "${baseUrl}/v1"\nwire_api = "responses"\nrequires_openai_auth = false\nsupports_websockets = false\n`)
+    await writeFile(join(home, 'config.toml'), `model = "gpt-5.4"\nmodel_provider = "mock"\napproval_policy = "on-request"\nsandbox_mode = "read-only"\n[model_providers.mock]\nname = "Mock"\nbase_url = "${baseUrl}/v1"\nwire_api = "responses"\nrequires_openai_auth = false\nsupports_websockets = false\n[features]\nplugins = false\n`)
     host = await startStdioHost({ executable: process.execPath, args: [cli], cwd, codexHome: home, adapterConfig: { apiKey: 'pk_test.secret', tenantId: 'tenant', externalId: 'customer', baseUrl, codexVersion, experimentalQuestions: true, timeoutMs: 60_000, maySendSubject: () => answer !== 'privacy-refused', onEvent: event => { events.push(event); if (answer === 'disconnect' && event.type === 'decision_created') void host.close() } }, onMessage: message => messages.push(message) })
     const started = await host.startThread(); await validate('ThreadStartResponse', started)
     assert.equal(started.approvalsReviewer, 'user'); assert.equal(started.approvalPolicy, 'on-request')
@@ -84,7 +84,7 @@ const runScenario = async (kind, answer) => {
     else await assert.rejects(readFile(target))
     return { started, requests, completed }
   } finally {
-    await host?.close(); server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); await rm(scratch, { recursive: true, force: true })
+    await host?.close(); server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); await rm(scratch, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   }
 }
 for (const kind of ['command', 'file', 'question']) {
