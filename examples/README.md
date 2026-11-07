@@ -17,7 +17,7 @@ const host = await startStdioHost({
     apiKey: partnerApiKey,
     tenantId: authenticatedTenantId,
     externalId: authenticatedCustomerId,
-    codexVersion: '0.160.1',
+    codexVersion: '0.167.0',
     maySendSubject: subject => privacyPolicy.allows(subject),
     onEvent: event => audit.write(event),
   },

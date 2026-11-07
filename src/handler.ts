@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { createPusharyServer, isApproved, type CreateDecision } from '@pushary/server'
 import { decisionFingerprint } from '@pushary/server/adapters'
-import { COMMAND, FILES, QUESTIONS, certifiedThread, fileChangesOf, identityOf, isId, isRecord, isText, subjectOf } from './protocol'
+import { COMMAND, FILES, QUESTIONS, certifiedThread, isCertifiedCodexVersion, fileChangesOf, identityOf, isId, isRecord, isText, subjectOf } from './protocol'
 import { presentSubject, type PhoneQuestion } from './presentation'
 import { decisionFailureReason, decisionSnapshot, delay, isRetryable, withRetry, type DecisionSnapshot } from './partner-decisions'
 import { transitionRequest, type RequestCompletion, type RequestState } from './request-lifecycle'
@@ -36,7 +36,7 @@ const rpcKey = (id: string | number): string => JSON.stringify([typeof id, id])
 export const createPusharyCodexHandler = (configuration: PusharyCodexConfig): PusharyCodexHandler => {
   const config = Object.freeze({ ...configuration })
   const timeoutMs = config.timeoutMs ?? 300_000
-  if (config.codexVersion !== '0.160.1' || !Number.isInteger(timeoutMs) || timeoutMs < 60_000 || timeoutMs > 600_000 || !config.tenantId?.trim() || !config.externalId?.trim()) throw new TypeError('Invalid Codex adapter configuration')
+  if (!isCertifiedCodexVersion(config.codexVersion) || !Number.isInteger(timeoutMs) || timeoutMs < 60_000 || timeoutMs > 600_000 || !config.tenantId?.trim() || !config.externalId?.trim()) throw new TypeError('Invalid Codex adapter configuration')
   if ([config.sendResponse, config.requestTurnInterrupt, config.onEvent, config.maySendSubject].some(callback => typeof callback !== 'function')) throw new TypeError('All host callbacks are required')
   const decisions = createPusharyServer({ apiKey: config.apiKey, baseUrl: config.baseUrl, requestTimeoutMs: 10_000 }).decisions
   const generation = randomUUID()

@@ -21,6 +21,22 @@ const setup = (overrides: Partial<PusharyCodexConfig> = {}) => {
 }
 afterEach(async () => { await Promise.all(instances.splice(0).map(handler => handler.dispose())); vi.unstubAllGlobals(); vi.useRealTimers() })
 
+describe('certified Codex versions', () => {
+  it.each(['0.160.1', '0.167.0'] as const)('accepts Codex %s', version => {
+    expect(() => setup({ codexVersion: version })).not.toThrow()
+  })
+
+  it.each(['0.166.0', '0.168.0', ''])('refuses uncertified Codex %j', version => {
+    expect(() => setup({ codexVersion: version as PusharyCodexConfig['codexVersion'] })).toThrow('Invalid Codex adapter configuration')
+  })
+
+  it('leaves a managed human checkpoint (kind humanCommand) to Codex\'s own review', () => {
+    const { handler, events } = setup()
+    expect(handler.handle(command(7, { kind: 'humanCommand' })).kind).toBe('unhandled')
+    expect(events.at(-1)).toMatchObject({ type: 'native_review_required', requestId: 7 })
+  })
+})
+
 describe('live request ownership', () => {
   it.each(['privacy', 'unsupported', 'oversized', 'method', 'unregistered'])('keeps one native owner during %s fallback callbacks and later redelivery', async scenario => {
     const fetch = vi.fn(async () => answered()); vi.stubGlobal('fetch', fetch)

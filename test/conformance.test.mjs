@@ -9,6 +9,7 @@ import Ajv from 'ajv'
 import { startStdioHost } from '../examples/stdio-host.mjs'
 const require = createRequire(import.meta.url)
 const cli = require.resolve('@openai/codex/bin/codex.js')
+const codexVersion = require('@openai/codex/package.json').version
 const validators = new Map()
 const schemaForMethod = {
   'item/commandExecution/requestApproval': 'CommandExecutionRequestApprovalParams',
@@ -16,7 +17,7 @@ const schemaForMethod = {
   'item/tool/requestUserInput': 'ToolRequestUserInputParams',
 }
 const validate = async (name, value) => {
-  if (!validators.has(name)) validators.set(name, new Ajv({ strict: false, validateFormats: false }).compile(JSON.parse(await readFile(new URL(`./fixtures/0.160.1/${name}.json`, import.meta.url), 'utf8'))))
+  if (!validators.has(name)) validators.set(name, new Ajv({ strict: false, validateFormats: false }).compile(JSON.parse(await readFile(new URL(`./fixtures/${codexVersion}/${name}.json`, import.meta.url), 'utf8'))))
   const validator = validators.get(name)
   assert.ok(validator(value), JSON.stringify(validator.errors))
 }
@@ -61,7 +62,7 @@ const runScenario = async (kind, answer) => {
     const address = server.address(); assert.ok(address && typeof address === 'object')
     const baseUrl = `http://127.0.0.1:${address.port}`
     await writeFile(join(home, 'config.toml'), `model = "gpt-5.4"\nmodel_provider = "mock"\napproval_policy = "on-request"\nsandbox_mode = "read-only"\n[model_providers.mock]\nname = "Mock"\nbase_url = "${baseUrl}/v1"\nwire_api = "responses"\nrequires_openai_auth = false\nsupports_websockets = false\n`)
-    host = await startStdioHost({ executable: process.execPath, args: [cli], cwd, codexHome: home, adapterConfig: { apiKey: 'pk_test.secret', tenantId: 'tenant', externalId: 'customer', baseUrl, codexVersion: '0.160.1', experimentalQuestions: true, timeoutMs: 60_000, maySendSubject: () => answer !== 'privacy-refused', onEvent: event => { events.push(event); if (answer === 'disconnect' && event.type === 'decision_created') void host.close() } }, onMessage: message => messages.push(message) })
+    host = await startStdioHost({ executable: process.execPath, args: [cli], cwd, codexHome: home, adapterConfig: { apiKey: 'pk_test.secret', tenantId: 'tenant', externalId: 'customer', baseUrl, codexVersion, experimentalQuestions: true, timeoutMs: 60_000, maySendSubject: () => answer !== 'privacy-refused', onEvent: event => { events.push(event); if (answer === 'disconnect' && event.type === 'decision_created') void host.close() } }, onMessage: message => messages.push(message) })
     const started = await host.startThread(); await validate('ThreadStartResponse', started)
     assert.equal(started.approvalsReviewer, 'user'); assert.equal(started.approvalPolicy, 'on-request')
     const mode = kind === 'question' ? { mode: 'plan', settings: { model: 'gpt-5.4', reasoning_effort: 'medium', developer_instructions: null } } : undefined

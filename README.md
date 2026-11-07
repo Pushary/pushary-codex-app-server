@@ -2,7 +2,7 @@
 
 Route live Codex app-server command and file approvals to an enrolled Pushary Partner customer. The host keeps control of Codex authentication, process lifetime, native UI, and response delivery. This MIT package uses only the public `@pushary/server` SDK.
 
-Experimental release: pinned to **Codex 0.160.1**, Node 22/24, and **@pushary/server >=2.3.0**. See [compatibility and verification](COMPATIBILITY.md).
+Experimental release: certified for **Codex 0.160.1 and 0.167.0**, Node 22/24, and **@pushary/server >=2.3.0**. See [compatibility and verification](COMPATIBILITY.md).
 
 [Connect a test customer](https://pushary.com/sign-up?from=agent&plan=partner&utm_source=github&utm_medium=oss-adapter&utm_campaign=pushary-codex-app-server&utm_content=partner-start) · [Partner setup guide](https://pushary.com/docs/agents/build/quickstart?utm_source=github&utm_medium=oss-adapter&utm_campaign=pushary-codex-app-server&utm_content=guide)
 
@@ -35,7 +35,7 @@ const approvals = createPusharyCodexHandler({
   apiKey: partnerApiKey,
   tenantId: authenticatedTenantId,
   externalId: authenticatedCustomerId,
-  codexVersion: '0.160.1',
+  codexVersion: '0.167.0',
   agentName: 'My coding assistant',
   maySendSubject: subject => customerPrivacyPolicy.allows(subject),
   sendResponse: reply => connection.enqueue(reply),
@@ -64,7 +64,7 @@ Register the effective **result**, not the parameters you requested. Only `on-re
 
 - Full command, working directory and reason. Only one-request `accept`, `decline` or `cancel` is emitted. Known optional exec-policy suggestions do not grant a standing rule. Network, remote environments, stdin, additional permissions and unknown decision options require native handling.
 - Complete file patches cached from `item/started` and `item/fileChange/patchUpdated`. A changed patch invalidates an outstanding approval. Missing or ambiguous patches and `grantRoot` are refused. Every path, operation, rename and diff is presented; nothing is truncated.
-- Optional `experimentalQuestions: true` accepts a bounded protocol subset: 1–3 blocking, nonsecret questions with `isOther:false`. **The built-in Codex 0.160.1 tool always sets `isOther:true`, so its questions need native UI.** The included headless host interrupts them. Synthetic protocol tests cover the smaller subset; they are not evidence of native phone-question support.
+- Optional `experimentalQuestions: true` accepts a bounded protocol subset: 1 to 3 blocking, nonsecret questions with `isOther:false`. **The built-in question tool in Codex 0.160.1 and 0.167.0 always sets `isOther:true`, so its questions need native UI.** The included headless host interrupts them. Synthetic protocol tests cover the smaller subset; they are not evidence of native phone-question support.
 
 MCP elicitation, permissions, dynamic tools, account/auth callbacks and legacy v1 approvals remain host responsibilities. The [example host](examples/stdio-host.mjs) has explicit fail-closed fallbacks.
 

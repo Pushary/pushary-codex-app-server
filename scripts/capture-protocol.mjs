@@ -7,13 +7,13 @@ import { createHash } from 'node:crypto'
 const require = createRequire(import.meta.url)
 const cli = require.resolve('@openai/codex/bin/codex.js')
 const scratch = mkdtempSync(join(tmpdir(), 'pushary-codex-schema-'))
-const destination = resolve(process.argv[2] ?? 'test/fixtures/0.160.1')
 const schemas = ['CommandExecutionRequestApprovalParams', 'CommandExecutionRequestApprovalResponse', 'FileChangeRequestApprovalParams', 'FileChangeRequestApprovalResponse', 'FileChangePatchUpdatedNotification', 'ToolRequestUserInputParams', 'ToolRequestUserInputResponse', 'ThreadStartResponse', 'McpServerElicitationRequestResponse', 'PermissionsRequestApprovalResponse', 'DynamicToolCallResponse']
 try {
   const env = { PATH: process.env.PATH, HOME: scratch, CODEX_HOME: scratch, TMPDIR: scratch }
   const version = execFileSync(process.execPath, [cli, '--version'], { env, encoding: 'utf8' }).trim()
   const release = /^codex-cli (\d+\.\d+\.\d+(?:[-+][\w.-]+)?)$/.exec(version)?.[1]
   if (!release) throw new Error('Unrecognized Codex version')
+  const destination = resolve(process.argv[2] ?? join('test/fixtures', release))
   execFileSync(process.execPath, [cli, 'app-server', 'generate-json-schema', '--experimental', '--out', join(scratch, 'schemas')], { env, stdio: 'pipe' })
   mkdirSync(destination, { recursive: true })
   const hashes = {}

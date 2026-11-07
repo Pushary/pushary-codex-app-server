@@ -1,0 +1,18 @@
+{
+  "version": "codex-cli 0.167.0",
+  "source": "https://github.com/openai/codex/tree/rust-v0.167.0",
+  "license": "Apache-2.0",
+  "hashes": {
+    "CommandExecutionRequestApprovalParams": "799abbf1875b3e774d6da16f277032025a03d6717cba0e67fdd89446666d0610",
+    "CommandExecutionRequestApprovalResponse": "6d0767113e22f311381809b6b236b0dde2b99b01992879c26bf7b1ea0e003cb7",
+    "FileChangeRequestApprovalParams": "13848b26814c286ad6425a20d01c1691c86790e1f9e2529399677a8a22fe0d18",
+    "FileChangeRequestApprovalResponse": "b95b03ee6be674e25cee2e863cc135a28620e1070addd2f34685aadee27cde08",
+    "FileChangePatchUpdatedNotification": "cfb69d18658610a0510f213e09c6847f70517410ed91cf99cc4713c15a795213",
+    "ToolRequestUserInputParams": "fda15b62e7446105b59c8ed85c908abed2a47db70653e57c92c47a2f204fa77a",
+    "ToolRequestUserInputResponse": "5073b245f741fa8ce62ec52e4dd1809b7831f9c4284c279a78abc9b171f8e3f2",
+    "ThreadStartResponse": "d98f3ee79c052e04fda92f60028249e6685389a017bf190b6c2c418d06533375",
+    "McpServerElicitationRequestResponse": "792a012fdfe53ac211575a6c37ffbd492be848d15cb313d1bb4b534ade1f54ac",
+    "PermissionsRequestApprovalResponse": "23f3f24e9dbf35db3e0b85703f0d934da5a1cff3cbb611fba8bcd41f3b4a04b0",
+    "DynamicToolCallResponse": "abb082cad67f11fcc98ba75f2eff75d7d1723af0c657655329b83ff160451a02"
+  }
+}

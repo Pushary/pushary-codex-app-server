@@ -1,10 +1,10 @@
 # Compatibility evidence
 
-Status: experimental 0.1.0 release; certified only for Codex 0.160.1.
+Status: experimental 0.2.0 release; certified for Codex 0.160.1 and 0.167.0.
 
 | Boundary | Evidence |
 | --- | --- |
-| Codex | npm `@openai/codex@0.160.1`; generated schemas and SHA-256 provenance under `test/fixtures/0.160.1` |
+| Codex | npm `@openai/codex@0.160.1` and `@openai/codex@0.167.0`; generated schemas and SHA-256 provenance under `test/fixtures/<version>` |
 | Transport | newline JSON over stdio; 1 MiB frame cap, bounded FIFO, separate host RPC IDs |
 | Thread policy | real initialize/start response; user reviewer and read-only sandbox |
 | Command | real `exec_command` request, accept/deny, absent side effect before approval, file written only after accept |
@@ -82,3 +82,30 @@ All contents are present, but multiline review is less readable. The display fix
 is deferred; this release preserves the certified presentation. Native Codex
 questions, restart recovery and exactly-once execution remain unsupported as
 specified above. No real model-provider behavior was certified by this fixture.
+
+
+## Codex 0.167.0 certification, 2026-11-07
+
+The weekly protocol check found Codex 0.167.0 differs from 0.160.1 in two of the
+eleven certified schemas:
+
+- `CommandExecutionRequestApprovalParams`: the approval kind adds `humanCommand`, a
+  managed checkpoint that Codex sends only to a host declaring the
+  `requiredHumanApproval` initialize capability. The example host doesn't declare it,
+  and the adapter refuses any kind other than `command`, so such a request goes to
+  native review. A unit test covers it.
+- `ThreadStartResponse`: new optional fields and changed unions inside turn, item, user
+  input, error and message-phase definitions. `certifiedThread` reads none of them; the
+  thread ID, status, approval policy, reviewer and sandbox it reads are unchanged.
+
+The other nine schemas are byte-identical.
+
+On Node 24.3.0/macOS, with `@openai/codex@0.167.0` installed and verified through
+`codex --version`:
+- 112 unit and race tests passed;
+- the 8 real-binary scenarios passed, with requests validated against the 0.167.0 schemas: command approve, deny, privacy refusal and disconnect; file approve, deny and disconnect; and the native question fallback;
+- the 7 host lifecycle checks passed.
+
+The physical-phone certification above was not repeated. Partner delivery, answers,
+expiry and recipient enforcement run through code this release does not change; the
+Codex side of those paths is what the real-binary scenarios re-verify.

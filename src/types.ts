@@ -1,3 +1,5 @@
+import type { CertifiedCodexVersion } from './protocol'
+
 export type CodexRequestId = string | number
 export type CodexReply =
   | { readonly id: CodexRequestId; readonly result: { readonly decision: 'accept' | 'decline' | 'cancel' } }
@@ -37,7 +39,7 @@ export interface PusharyCodexConfig {
   readonly tenantId: string
   readonly agentName?: string
   readonly baseUrl?: string
-  readonly codexVersion: '0.160.1'
+  readonly codexVersion: CertifiedCodexVersion
   readonly experimentalQuestions?: boolean
   readonly timeoutMs?: number
   readonly signal?: AbortSignal
