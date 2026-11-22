@@ -1,6 +1,6 @@
 # Compatibility evidence
 
-Status: experimental 0.2.0 release; certified for Codex 0.160.1 and 0.167.0.
+Status: experimental 0.2 release; certified for Codex 0.160.1 and 0.167.0.
 
 | Boundary | Evidence |
 | --- | --- |

@@ -1,9 +1,9 @@
 {
   "name": "@pushary/codex-app-server",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Partner approvals for live Codex app-server sessions",
   "author": "Pushary <business@pushary.com>",
-  "homepage": "https://github.com/Pushary/pushary-codex-app-server#readme",
+  "homepage": "https://pushary.com/docs/agents/build/quickstart",
   "repository": {
     "type": "git",
     "url": "https://github.com/Pushary/pushary-codex-app-server.git"

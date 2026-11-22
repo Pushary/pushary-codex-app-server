@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+README: what you get after you sign in, plans, and links to the integration's pages. No code changes.
+
 ## 0.2.0
 
 Certified for Codex 0.167.0 as well as 0.160.1; `codexVersion` accepts either, and

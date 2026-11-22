@@ -6,7 +6,15 @@ Experimental release: certified for **Codex 0.160.1 and 0.167.0**, Node 22/24, a
 
 [Connect a test customer](https://pushary.com/sign-up?from=agent&plan=partner&utm_source=github&utm_medium=oss-adapter&utm_campaign=pushary-codex-app-server&utm_content=partner-start) · [Partner setup guide](https://pushary.com/docs/agents/build/quickstart?utm_source=github&utm_medium=oss-adapter&utm_campaign=pushary-codex-app-server&utm_content=guide)
 
-Live delivery requires a Pushary Partner workspace and an enrolled customer. The compatibility limits above still apply.
+Live delivery requires a Pushary Partner workspace, from $99 a month, and an enrolled customer. The compatibility limits above still apply.
+
+## What your customer sees
+
+Your customer opens your enrollment link once and connects the free Pushary app ([iPhone](https://apps.apple.com/us/app/pushary/id6785677563), [Android](https://play.google.com/store/apps/details?id=com.pushary.app)). They need no Pushary account or plan. When Codex asks to run a command, their phone shows the full command, working directory and reason. For a file change it shows every path and diff. They approve or deny that one request. A denial, an error or no answer by the deadline never grants permission.
+
+Pushary hosts the phone delivery and the decision record. Your host keeps Codex, its authentication, the process, the native UI and every reply to Codex.
+
+Approving your own Codex sessions from your phone needs no code: `npx -y pushary@latest setup` connects Codex on the Agent, Agent Pro or Team plan. See [Codex setup](https://pushary.com/docs/agents/guides/codex?utm_source=github&utm_medium=oss-adapter&utm_campaign=pushary-codex-app-server&utm_content=readme).
 
 ## Install and enroll
 
@@ -99,3 +107,10 @@ The conformance suite launches the pinned binary with isolated temporary HOME/CO
 `packages/codex-app-server` is the source of truth. `scripts/lib/mirrors.mjs` maps it to `Pushary/pushary-codex-app-server`, with managed standalone CI/lockfile and release tags, like the other adapters. Never copy private monorepo dependencies into the mirror.
 
 SDK 2.3.0 is published and the standalone lock resolves its registry artifact. Physical-phone certification and recipient-isolation checks are recorded in [COMPATIBILITY.md](COMPATIBILITY.md). The provisioned public mirror follows this package, and the shared npm release workflow publishes version bumps. Scheduled protocol drift compares latest generated schemas with the certified fixtures; it never widens the runtime version automatically.
+
+## Links
+
+- [Human in the loop for AI agents](https://pushary.com/human-in-the-loop?utm_source=github&utm_medium=oss-adapter&utm_campaign=pushary-codex-app-server&utm_content=readme), with one page per framework.
+- [Partner plan](https://pushary.com/partners?utm_source=github&utm_medium=oss-adapter&utm_campaign=pushary-codex-app-server&utm_content=readme), from $99 a month. All plans are on the [pricing page](https://pushary.com/pricing?utm_source=github&utm_medium=oss-adapter&utm_campaign=pushary-codex-app-server&utm_content=readme).
+- [Browser demo](https://pushary.com/try?utm_source=github&utm_medium=oss-adapter&utm_campaign=pushary-codex-app-server&utm_content=readme) of one approval.
+- Other adapters: [Claude Agent SDK](https://github.com/Pushary/pushary-claude-agent-sdk), [OpenAI Agents SDK](https://github.com/Pushary/pushary-openai-agents), and the [server SDK](https://github.com/Pushary/pushary-server) this package is built on.
