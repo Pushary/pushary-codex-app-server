@@ -1,10 +1,10 @@
 # Compatibility evidence
 
-Status: experimental 0.2 release; certified for Codex 0.160.1 and 0.167.0.
+Status: experimental 0.3 release; certified for Codex 0.160.1, 0.167.0 and 0.171.0.
 
 | Boundary | Evidence |
 | --- | --- |
-| Codex | npm `@openai/codex@0.160.1` and `@openai/codex@0.167.0`; generated schemas and SHA-256 provenance under `test/fixtures/<version>` |
+| Codex | npm `@openai/codex@0.160.1`, `@openai/codex@0.167.0` and `@openai/codex@0.171.0`; generated schemas and SHA-256 provenance under `test/fixtures/<version>` |
 | Transport | newline JSON over stdio; 1 MiB frame cap, bounded FIFO, separate host RPC IDs |
 | Thread policy | real initialize/start response; user reviewer and read-only sandbox |
 | Command | real `exec_command` request, accept/deny, absent side effect before approval, file written only after accept |
@@ -109,3 +109,39 @@ On Node 24.3.0/macOS, with `@openai/codex@0.167.0` installed and verified throug
 The physical-phone certification above was not repeated. Partner delivery, answers,
 expiry and recipient enforcement run through code this release does not change; the
 Codex side of those paths is what the real-binary scenarios re-verify.
+
+## Codex 0.171.0 certification, 2026-11-23
+
+The weekly protocol check found Codex 0.171.0 differs from 0.167.0 in one of the
+eleven certified schemas, `ThreadStartResponse`:
+
+- `Thread` gains an optional, nullable `attachedToThreadId`: the parent that owns a
+  persisted attached thread. `thread/start` takes no attachment parameter, so a thread
+  the host starts is its own. The adapter keys every approval on the request's own
+  `threadId` and claims only registered threads; a request from an attached thread the
+  host never registered goes to native review. A unit test registers a thread start
+  response carrying the field and checks the unregistered path; it is the same path
+  0.167.0 had, since the adapter never reads the field.
+- The `agentMessage` item gains an optional `moderation` (`AgentMessageModeration`,
+  `AgentMessageDisplay`, `AnswerAnnotation`, `AnswerReplacement`, `BlockReason`,
+  `HelplineSubject`, `TrustedContacts`): how ChatGPT should present a moderated final
+  answer. It is attached to the completed answer item, not to approvals; a blocked
+  turn still ends with `turn/completed`, which abandons any approval left in it. A unit
+  test sends a blocked answer and then the turn's end; it passes because the adapter
+  ignores the field, which is the point.
+- `mcpToolCall` gains `environmentId`, `CodexErrorInfo` adds `bioPolicy` and
+  `inferenceHookDenied`, and an audio content item may carry a `file_id` instead of
+  `audio_url`. The adapter reads none of them.
+
+`certifiedThread` still reads only the thread ID, status, approval policy, reviewer and
+sandbox, and those definitions are unchanged. The other ten schemas are
+byte-identical.
+
+On Node 24.3.0/macOS, with `@openai/codex@0.171.0` installed and verified through
+`codex --version`:
+- 117 unit and race tests passed;
+- the 8 real-binary scenarios passed, with requests validated against the 0.171.0 schemas: command approve, deny, privacy refusal and disconnect; file approve, deny and disconnect; and the native question fallback;
+- the 7 host lifecycle checks passed.
+
+The physical-phone certification above was not repeated, for the reason given for
+0.167.0.

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0
+
+Certified for Codex 0.171.0 as well as 0.160.1 and 0.167.0; `codexVersion` accepts any
+of the three. Codex 0.171.0 changes only the thread start response: threads gain an
+optional `attachedToThreadId`, and the final answer item gains an optional
+`moderation`. The adapter keys approvals on each request's own thread and claims only
+threads the host registered, so a request from an attached thread goes to Codex's own
+review; a blocked answer still ends its turn, which abandons any approval left in it.
+The 8 real-binary scenarios and 7 host lifecycle checks pass against the 0.171.0
+binary.
+
 ## 0.2.1
 
 README: what you get after you sign in, plans, and links to the integration's pages. No code changes.

@@ -22,11 +22,11 @@ const setup = (overrides: Partial<PusharyCodexConfig> = {}) => {
 afterEach(async () => { await Promise.all(instances.splice(0).map(handler => handler.dispose())); vi.unstubAllGlobals(); vi.useRealTimers() })
 
 describe('certified Codex versions', () => {
-  it.each(['0.160.1', '0.167.0'] as const)('accepts Codex %s', version => {
+  it.each(['0.160.1', '0.167.0', '0.171.0'] as const)('accepts Codex %s', version => {
     expect(() => setup({ codexVersion: version })).not.toThrow()
   })
 
-  it.each(['0.166.0', '0.168.0', ''])('refuses uncertified Codex %j', version => {
+  it.each(['0.166.0', '0.168.0', '0.170.0', '0.172.0', ''])('refuses uncertified Codex %j', version => {
     expect(() => setup({ codexVersion: version as PusharyCodexConfig['codexVersion'] })).toThrow('Invalid Codex adapter configuration')
   })
 
@@ -34,6 +34,28 @@ describe('certified Codex versions', () => {
     const { handler, events } = setup()
     expect(handler.handle(command(7, { kind: 'humanCommand' })).kind).toBe('unhandled')
     expect(events.at(-1)).toMatchObject({ type: 'native_review_required', requestId: 7 })
+  })
+
+  it('registers a Codex 0.171.0 thread start response carrying attachedToThreadId and leaves a thread it never registered to native review', () => {
+    vi.stubGlobal('fetch', vi.fn(async () => pending()))
+    const { handler, events } = setup({ codexVersion: '0.171.0' })
+    handler.registerThread({ thread: { id: 'parent', status: { type: 'idle' }, attachedToThreadId: null }, approvalPolicy: 'on-request', approvalsReviewer: 'user', sandbox: { type: 'readOnly' } })
+    expect(handler.handle(command(1, { threadId: 'parent' })).kind).toBe('claimed')
+    expect(handler.handle(command(2, { threadId: 'child' })).kind).toBe('unhandled')
+    expect(events.at(-1)).toMatchObject({ type: 'native_review_required', requestId: 2, reason: 'Unregistered request context' })
+  })
+
+  it('does not settle an approval on a moderated answer item and abandons it when the turn ends', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (_url, options) => options?.method === 'DELETE' ? Response.json({ decisionId: 'd1', cancelled: true }) : pending()))
+    const { handler, replies, events } = setup({ codexVersion: '0.171.0' })
+    expect(handler.handle(command()).kind).toBe('claimed'); await flush()
+    handler.handle({ method: 'item/completed', params: { threadId: 'thread', turnId: 'turn', completedAtMs: 2, item: { id: 'answer', type: 'agentMessage', text: '', phase: 'final_answer', moderation: { moderated: true, display: { mode: 'block', version: 1, reason: { kind: 'cyber' } } } } } })
+    await flush()
+    expect(events.some(event => event.type === 'request_abandoned')).toBe(false)
+    handler.handle({ method: 'turn/completed', params: { threadId: 'thread', turn: { id: 'turn', status: 'completed', items: [] } } })
+    await flush()
+    expect(events.filter(event => event.type === 'request_abandoned')).toHaveLength(1)
+    expect(replies).toEqual([])
   })
 })
 

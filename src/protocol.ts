@@ -3,7 +3,7 @@ import type { CodexQuestion, CodexRequestId, CodexReviewSubject, FileChange, Req
 export const COMMAND = 'item/commandExecution/requestApproval'
 export const FILES = 'item/fileChange/requestApproval'
 export const QUESTIONS = 'item/tool/requestUserInput'
-export const CERTIFIED_CODEX_VERSIONS = ['0.160.1', '0.167.0'] as const
+export const CERTIFIED_CODEX_VERSIONS = ['0.160.1', '0.167.0', '0.171.0'] as const
 export type CertifiedCodexVersion = (typeof CERTIFIED_CODEX_VERSIONS)[number]
 export const isCertifiedCodexVersion = (value: unknown): value is CertifiedCodexVersion => CERTIFIED_CODEX_VERSIONS.some(version => version === value)
 export const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value)
